@@ -4,10 +4,7 @@ import db from '.';
 
 class UserModel extends Model {
   declare readonly id: number;
-  declare username: string;
-  declare role: string;
-  declare email: string;
-  declare password: string;
+  declare teamName: string;
 }
 
 UserModel.init({
@@ -17,19 +14,7 @@ UserModel.init({
     primaryKey: true,
     type: INTEGER,
   },
-  username: {
-    allowNull: false,
-    type: STRING,
-  },
-  role: {
-    allowNull: false,
-    type: STRING,
-  },
-  email: {
-    allowNull: false,
-    type: STRING,
-  },
-  password: {
+  teamName: {
     allowNull: false,
     type: STRING,
   },
