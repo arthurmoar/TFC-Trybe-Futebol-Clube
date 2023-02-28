@@ -2,12 +2,12 @@ import { Model, INTEGER, STRING } from 'sequelize';
 
 import db from '.';
 
-class UserModel extends Model {
+class TeamsModel extends Model {
   declare readonly id: number;
   declare teamName: string;
 }
 
-UserModel.init({
+TeamsModel.init({
   id: {
     allowNull: false,
     autoIncrement: true,
@@ -22,7 +22,7 @@ UserModel.init({
   sequelize: db,
   underscored: true,
   timestamps: false,
-  modelName: 'users',
+  modelName: 'teams',
 });
 
-export default UserModel;
+export default TeamsModel;
