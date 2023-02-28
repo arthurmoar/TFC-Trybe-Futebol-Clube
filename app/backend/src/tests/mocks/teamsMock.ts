@@ -10,8 +10,8 @@ const teams = [
 ]
 
 const teamsByPk = {
-  "id": 2,
-    "teamName": "Bahia"
+  "id": 5,
+  "teamName": "Cruzeiro"
 }
 
 export default { teams, teamsByPk };

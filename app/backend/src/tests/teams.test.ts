@@ -32,4 +32,17 @@ describe('1 - Teste na rota teams ', () => {
     expect(chaiHttpResponse).to.have.status(200);
     expect(chaiHttpResponse.body).to.be.deep.equal(teamsMock.teams);
   });
+
+  it('1.2 - Testando se retonar um times procurando pelo Id e com o status 200 ', async () => {
+    sinon
+      .stub(TeamsModel, "findByPk")
+      .resolves(teamsMock.teamsByPk as TeamsModel);
+
+    chaiHttpResponse = await chai
+       .request(app)
+       .get(`/teams/${teamsMock.teamsByPk.id}`)
+
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(teamsMock.teamsByPk);
+  });
 });
