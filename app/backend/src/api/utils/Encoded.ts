@@ -1,11 +1,11 @@
-import * as JWT from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 require('dotenv/config');
 
-const secret: JWT.Secret = process.env.JWT_SECRET as string;
+const secret: jwt.Secret = process.env.JWT_SECRET as string;
 
-const encodedToken = (email: string) => {
-  const token = JWT.sign({ email }, secret, {
+const createToken = (data: string) => {
+  const token = jwt.sign({ data }, secret, {
     expiresIn: '1d',
     algorithm: 'HS256',
   });
@@ -13,4 +13,12 @@ const encodedToken = (email: string) => {
   return token;
 };
 
-export default { encodedToken };
+const validateToken = (token: string) => {
+  const decoded = jwt.decode(token);
+  return decoded as jwt.JwtPayload;
+};
+
+export = {
+  createToken,
+  validateToken,
+};

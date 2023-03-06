@@ -1,28 +1,30 @@
-import * as bcrypt from 'bcryptjs';
+import jwt = require('../utils/Encoded');
 import UserModel from '../../database/models/UserModel';
-import IServiceLogin from '../interface/IServiceLogin';
-import Encoded from '../utils/Encoded';
 import ErrorMap from '../utils/errorMap';
+import IServiceUser from '../interface/IServiceLogin';
+import IUser from '../interface/IUser';
 
 export default class LoginService {
-  static async login(email: string, password: string): Promise<IServiceLogin> {
+  static async login(email: string, password: string): Promise<IServiceUser> {
     if (!email || !password) {
       return { type: ErrorMap.BAD_REQUEST, message: 'All fields must be filled' };
     }
 
-    const loginUser = await UserModel.findOne({ where: { email } });
-
-    if (!loginUser) {
-      return { type: ErrorMap.UNAUTHORIZED, message: 'Incorrect email or password' };
+    const user = await UserModel.findOne({ where: { email } });
+    if (!user) {
+      return { type: ErrorMap.UNAUTHORIZED, message: 'Invalid email or password' };
     }
 
-    const encriptedPassword = await bcrypt.compare(password, loginUser.password);
-    if (!encriptedPassword) {
-      return { type: ErrorMap.UNAUTHORIZED, message: 'Incorrect email or password' };
-    }
+    const token = jwt.createToken(email);
 
-    const encodedToken = Encoded.encodedToken(email);
+    return { type: null, message: token };
+  }
 
-    return { type: null, message: encodedToken };
+  static async userRole(token: string): Promise<string> {
+    const decoded = jwt.validateToken(token);
+    const { data } = decoded;
+    const email = data;
+    const { role } = await UserModel.findOne({ where: { email } }) as IUser;
+    return role;
   }
 }

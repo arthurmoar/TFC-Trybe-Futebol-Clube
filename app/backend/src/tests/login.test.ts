@@ -57,4 +57,13 @@ describe('Testando rota de login', () => {
        expect(chaiHttpResponse).to.have.status(400);
        expect(chaiHttpResponse.body.massage).to.be.equal('All fields must be filled');
   });
+
+  it('Deve retornar um status 401 caso um token não enviado', async () => {
+    chaiHttpResponse = await chai
+    .request(app)
+    .get('/login/role')
+
+    expect(chaiHttpResponse).to.have.status(401);
+    expect(chaiHttpResponse.body.message).to.be.eq('Token not found');
+  });
 });
