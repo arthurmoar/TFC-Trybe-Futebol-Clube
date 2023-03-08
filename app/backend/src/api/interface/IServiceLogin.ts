@@ -1,6 +1,5 @@
-import ErrorMap from '../utils/errorMap';
+import IUser from './IUser';
 
-export default interface IServiceUser {
-  type: ErrorMap | null,
-  message: string
+export default interface IServiceLogin {
+  login(email: string, password: string): Promise<IUser | null>
 }

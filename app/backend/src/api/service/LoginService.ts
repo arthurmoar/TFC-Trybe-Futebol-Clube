@@ -1,30 +1,27 @@
-import jwt = require('../utils/Encoded');
+import { ModelStatic } from 'sequelize';
+import * as bcrypt from 'bcryptjs';
 import UserModel from '../../database/models/UserModel';
-import ErrorMap from '../utils/errorMap';
-import IServiceUser from '../interface/IServiceLogin';
+import IServiceLogin from '../interface/IServiceLogin';
 import IUser from '../interface/IUser';
 
-export default class LoginService {
-  static async login(email: string, password: string): Promise<IServiceUser> {
-    if (!email || !password) {
-      return { type: ErrorMap.BAD_REQUEST, message: 'All fields must be filled' };
+export default class LoginService implements IServiceLogin {
+  protected model: ModelStatic<UserModel> = UserModel;
+
+  public static encrypted(password: string, user: IUser) {
+    const isValidPasword = bcrypt.compareSync(password, user.password);
+
+    if (!isValidPasword) {
+      const error = new Error('Invalid email or password');
+      error.name = 'UNAUTHORIZED';
+      throw error;
     }
-
-    const user = await UserModel.findOne({ where: { email } });
-    if (!user) {
-      return { type: ErrorMap.UNAUTHORIZED, message: 'Invalid email or password' };
-    }
-
-    const token = jwt.createToken(email);
-
-    return { type: null, message: token };
   }
 
-  static async userRole(token: string): Promise<string> {
-    const decoded = jwt.validateToken(token);
-    const { data } = decoded;
-    const email = data;
-    const { role } = await UserModel.findOne({ where: { email } }) as IUser;
-    return role;
+  async login(email: string, password: string): Promise<IUser | null> {
+    const userLogin = await this.model.findOne({ where: { email } });
+    if (userLogin) {
+      LoginService.encrypted(password, userLogin);
+    }
+    return userLogin;
   }
 }

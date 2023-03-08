@@ -1,10 +1,14 @@
 import { Router } from 'express';
 import LoginController from '../controller/LoginController';
+import LoginService from '../service/LoginService';
 import Authorization from '../middlewares/Authorization';
 
 const loginRouter = Router();
 
-loginRouter.post('/', (req, res) => LoginController.login(req, res));
-loginRouter.get('/role', Authorization.token, (req, res) => LoginController.validate(req, res));
+const loginService = new LoginService();
+const loginController = new LoginController(loginService);
+
+loginRouter.post('/', loginController.login);
+loginRouter.get('/role', Authorization.token, loginController.userRole);
 
 export default loginRouter;
