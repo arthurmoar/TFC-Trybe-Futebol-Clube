@@ -16,4 +16,11 @@ export default class MatchesService implements IServiceMatch {
     });
     return allMatches;
   }
+
+  async finishMatch(id: number): Promise<void> {
+    await this.model.update(
+      { inProgress: false },
+      { where: { id } },
+    );
+  }
 }
