@@ -16,7 +16,7 @@ const { expect } = chai;
 describe('1 - Teste na rota teams ', () => {
   let chaiHttpResponse: Response;
 
-  after(()=>{
+  afterEach(()=>{
     (TeamsModel.findAll as sinon.SinonStub).restore();
   })
 
@@ -44,5 +44,14 @@ describe('1 - Teste na rota teams ', () => {
 
     expect(chaiHttpResponse).to.have.status(200);
     expect(chaiHttpResponse.body).to.be.deep.equal(teamsMock.teamsByPk);
+  });
+
+  it('1.3 - Testando se retorna erro 404', async function() {
+    const outputMock = { message: 'Team not found' };
+    sinon.stub(TeamsModel, 'findByPk').resolves(null);
+
+    const response = await chai.request(app).get('/teams/999');
+    expect(response.status).to.be.eq(404);
+    expect(response.body).to.deep.eq(outputMock);
   });
 });

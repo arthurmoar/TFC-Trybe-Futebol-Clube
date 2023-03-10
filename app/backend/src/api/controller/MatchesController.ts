@@ -9,7 +9,20 @@ export default class MatchesController {
   }
 
   findAll = async (req: Request, res: Response) => {
+    const { inProgress } = req.query;
+
     const allMatches = await this._service.findAll();
+
+    if (inProgress === 'false') {
+      const filterInProgressMatch = allMatches.filter((match) => !match.inProgress);
+
+      return res.status(200).json(filterInProgressMatch);
+    }
+    if (inProgress === 'true') {
+      const filterInProgressMatch = allMatches.filter((match) => match.inProgress);
+
+      return res.status(200).json(filterInProgressMatch);
+    }
 
     return res.status(200).json(allMatches);
   };
