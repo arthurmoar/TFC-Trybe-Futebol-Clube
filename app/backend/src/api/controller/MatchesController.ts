@@ -51,6 +51,6 @@ export default class MatchesController {
     const matchCreator = await this._service
       .createMatch(homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals);
 
-    return res.status(200).json({ message: matchCreator });
+    return res.status(201).json(matchCreator);
   };
 }
