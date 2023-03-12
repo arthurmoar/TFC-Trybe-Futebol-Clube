@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import ValidadeMatch from '../helpers/ValidadeMatches';
 import IServiceMatch from '../interface/IServiceMatch';
 
 export default class MatchesController {
@@ -47,6 +48,9 @@ export default class MatchesController {
 
   createMatch = async (req: Request, res: Response) => {
     const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = req.body;
+
+    await ValidadeMatch.isEqualTeams(homeTeamId, awayTeamId);
+    await ValidadeMatch.teamValidateDB(homeTeamId, awayTeamId);
 
     const matchCreator = await this._service
       .createMatch(homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals);

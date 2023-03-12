@@ -43,4 +43,32 @@ const oneMatch = [{
     "teamName": "Grêmio"
   }
 }]
-  export default {matches, oneMatch};
+
+const requestUpdate = {
+  "homeTeamGoals": 3,
+  "awayTeamGoals": 1
+}
+
+const creationRequest = {
+  "homeTeamId": 16,
+  "awayTeamId": 8,
+  "homeTeamGoals": 2,
+  "awayTeamGoals": 2,
+}
+
+const createMatch = {
+  "id": 1,
+  "homeTeamId": 16,
+  "homeTeamGoals": 2,
+  "awayTeamId": 8,
+  "awayTeamGoals": 2,
+  "inProgress": true,
+}
+
+export default {
+  matches,
+  oneMatch,
+  createMatch,
+  creationRequest,
+  requestUpdate,
+};
