@@ -1,41 +1,43 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
 // @ts-ignore
-import chaiHttp from 'chai-http';
+import chaiHttp = require('chai-http');
 
 import { app } from '../app';
-import MatchModel from '../database/models/MatchesModel';
-import matchesMock from './mocks/matchesMock';
+import MatchesModel from '../database/models/MatchesModel';
 import * as JWT from 'jsonwebtoken';
+
+import { Model } from 'sequelize';
+
+import matchesMock from './mocks/matchesMock';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
-import { Model } from 'sequelize';
-
-describe('Testando a rota de partidas', () => {
+describe('3 - Testando a rota de partidas /matches', function () {
   afterEach(function() {
     sinon.restore();
   });
 
-  it('Deve retornar todas as partidas em um array', async () => {
-    sinon.stub(MatchModel, 'findAll').resolves(matchesMock.matches as unknown as Model[]);
+  it('3.1 - Deve retornar um array de partidas', async function () {
+    sinon.stub(MatchesModel, 'findAll').resolves(matchesMock.oneMatch as unknown as Model[]);
 
     const response = await chai.request(app).get('/matches');
-    expect(response.status).to.be.equal(200);
-    expect(response.body).to.deep.equal(matchesMock.matches);
-  })
-
-  it('Deve retonar um array filtrando as partidas em progresso', async function () {
-    sinon.stub(MatchModel, 'findAll').resolves(matchesMock.matches as unknown as Model[]);
-
-    const response = await chai.request(app).get('/matches?inProgress=false');
-    expect(response.status).to.be.equal(200);
-    expect(response.body).to.deep.equal(matchesMock.oneMatch);
+    expect(response.status).to.be.eq(200);
+    expect(response.body).to.deep.eq(matchesMock.oneMatch);
   });
 
-  it('Deve ser possivel atualizar uma partida', async function () {
+  it('3.2 - Deve retornar um array com sem as partidas "inprogress"', async function () {
+    sinon.stub(MatchesModel, 'findAll').resolves(matchesMock.matches as unknown as Model[]);
+
+    const response = await chai.request(app)
+      .get('/matches?inProgress=false');
+    expect(response.status).to.be.eq(200);
+    expect(response.body).to.deep.eq(matchesMock.oneMatch);
+  });
+
+  it('3.3 - Deve atualizar uma partida com sucesso', async function () {
     sinon.stub(JWT, 'verify').callsFake(() => {
       return Promise.resolve({success: 'Token is valid'});
     });
@@ -44,26 +46,28 @@ describe('Testando a rota de partidas', () => {
       .patch('/matches/1')
       .set('authorization', 'token')
       .send(matchesMock.requestUpdate);
-    expect(response.status).to.be.equal(200);
-    expect(response.body).to.deep.equal({ message: `Updated match` });
+    expect(response.status).to.be.eq(200);
+    expect(response.body).to.deep.eq({ message: `Updated match` });
   });
 
-  it('Deve ser capaz de criar uma partida com sucesso', async function () {
-
+  it('3.4 - Deve criar uma partida com sucesso', async function () {
     sinon.stub(JWT, 'verify').callsFake(() => {
       return Promise.resolve({success: 'Token is valid'});
     });
-    sinon.stub(MatchModel, 'create').resolves(matchesMock.createMatch as unknown as Model);
+    sinon.stub(MatchesModel, 'create').resolves(matchesMock.createMatch as unknown as Model);
 
     const response = await chai.request(app)
       .post('/matches')
+      .set('authorization', 'token')
       .send(matchesMock.creationRequest);
-    expect(response.status).to.be.equal(201);
-    expect(response.body).to.deep.equal(matchesMock.createMatch);
+    expect(response.status).to.be.eq(201);
+    expect(response.body).to.deep.eq(matchesMock.createMatch);
   });
 
-  it('Deve ser possivel finalizar uma partida', async function () {
-    sinon.stub(JWT, 'verify').callsFake(() => Promise.resolve({success: 'Token is valid'}));
+  it('3.5 - Deve finalizar uma partida com sucesso', async function () {
+    sinon.stub(JWT, 'verify').callsFake(() => {
+      return Promise.resolve({success: 'Token is valid'});
+    });
 
     const response = await chai.request(app)
       .patch('/matches/1/finish')
@@ -71,4 +75,4 @@ describe('Testando a rota de partidas', () => {
     expect(response.status).to.be.eq(200);
     expect(response.body).to.deep.eq({ message: 'Finished' });
   });
-})
+});
