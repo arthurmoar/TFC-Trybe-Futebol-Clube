@@ -1,18 +1,29 @@
 import { Request, Response } from 'express';
-import TeamsService from '../service/TeamsService';
+import IServiceTeam from '../interface/IServiceTeam';
 
-export default class TeamsController {
-  static async getAllTeams(_req: Request, res: Response) {
-    const times = await TeamsService.getAll();
+class TeamsController {
+  private _teamsService: IServiceTeam;
 
-    return res.status(200).json(times);
+  constructor(teamsService: IServiceTeam) {
+    this._teamsService = teamsService;
   }
 
-  static async getTeamById(req: Request, res: Response) {
-    const { id } = req.params;
+  getAllTeams = async (req: Request, res: Response) => {
+    const result = await this._teamsService.getAll();
+    return res.status(200).json(result);
+  };
 
-    const team = await TeamsService.getById(Number(id));
+  getTeamById = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const result = await this._teamsService.getById(id);
+    if (!result) {
+      return res.status(404).json({
+        message: 'Team not found',
+      });
+    }
 
-    return res.status(200).json(team);
-  }
+    if (result) return res.status(200).json(result);
+  };
 }
+
+export default TeamsController;

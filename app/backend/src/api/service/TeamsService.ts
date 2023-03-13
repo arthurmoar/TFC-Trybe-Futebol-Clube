@@ -1,15 +1,18 @@
-import TeamsModel from '../../database/models/TeamsModel';
+import { ModelStatic } from 'sequelize';
+import ITeam from '../interface/ITeam';
+import TeamModel from '../../database/models/TeamsModel';
+import ITeamsServices from '../interface/IServiceTeam';
 
-export default class TeamsService {
-  static async getAll() {
-    const times = TeamsModel.findAll();
+export default class TeamsService implements ITeamsServices {
+  protected model: ModelStatic<TeamModel> = TeamModel;
 
-    return times;
+  async getAll(): Promise<ITeam[]> {
+    const teams = await this.model.findAll();
+    return teams;
   }
 
-  static async getById(id: number) {
-    const teams = TeamsModel.findByPk(id);
-
-    return teams;
+  async getById(id: number): Promise<ITeam | null> {
+    const team = await this.model.findByPk(id);
+    return team;
   }
 }
