@@ -5,7 +5,7 @@ import ILeaderboard from '../interface/ILeaderborder';
 
 export default class LeaderborderHomeCalc {
   public static leaderborderCalc(teams: ITeam[], matches: IMatch []): ILeaderboard[] {
-    const result = teams.map(({ id, teamName }) => {
+    const leaderboardHome = teams.map(({ id, teamName }) => {
       const homeMatches = matches.filter(({ homeTeamId }) => homeTeamId === id);
       return {
         name: teamName,
@@ -20,7 +20,7 @@ export default class LeaderborderHomeCalc {
         efficiency: CalculateHome.efficiency(homeMatches),
       };
     });
-    return result;
+    return leaderboardHome;
   }
 
   public static orderedResult(leaderboard: ILeaderboard[]) {
