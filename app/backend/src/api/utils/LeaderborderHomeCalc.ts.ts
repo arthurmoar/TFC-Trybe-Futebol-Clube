@@ -1,4 +1,4 @@
-import Calculate from './Calculate';
+import CalculateHome from './CalculateHome';
 import ITeam from '../interface/ITeam';
 import IMatch from '../interface/IMatch';
 import ILeaderboard from '../interface/ILeaderborder';
@@ -9,15 +9,28 @@ export default class LeaderborderHomeCalc {
       const homeMatches = matches.filter(({ homeTeamId }) => homeTeamId === id);
       return {
         name: teamName,
-        totalPoints: Calculate.calculatePoints(homeMatches).totalPoints,
-        totalGames: Calculate.totalGames(id as number, homeMatches),
-        totalVictories: Calculate.calculatePoints(homeMatches).totalVictories,
-        totalDraws: Calculate.calculatePoints(homeMatches).totalDraws,
-        totalLosses: Calculate.calculatePoints(homeMatches).totalLosses,
-        goalsFavor: Calculate.goalsFavor(id as number, homeMatches),
-        goalsOwn: Calculate.goalsOwn(id as number, homeMatches),
+        totalPoints: CalculateHome.totalPoints(homeMatches),
+        totalGames: CalculateHome.totalGames(homeMatches),
+        totalVictories: CalculateHome.totalVictories(homeMatches),
+        totalDraws: CalculateHome.totalDraws(homeMatches),
+        totalLosses: CalculateHome.totalLosses(homeMatches),
+        goalsFavor: CalculateHome.goalsFavor(homeMatches),
+        goalsOwn: CalculateHome.goalsOwn(homeMatches),
+        goalsBalance: CalculateHome.goalsBalance(homeMatches),
+        efficiency: CalculateHome.efficiency(homeMatches),
       };
     });
     return result;
+  }
+
+  public static orderedResult(leaderboard: ILeaderboard[]) {
+    const order = leaderboard.sort((a, b) => (
+      b.totalPoints - a.totalPoints
+      || b.totalVictories - a.totalVictories
+      || b.goalsBalance - a.goalsBalance
+      || b.goalsFavor - a.goalsFavor
+      || a.goalsOwn - b.goalsOwn
+    ));
+    return order;
   }
 }

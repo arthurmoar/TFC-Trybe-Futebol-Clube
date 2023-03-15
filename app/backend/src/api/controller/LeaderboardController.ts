@@ -18,8 +18,7 @@ export default class LeaderboardController {
     const matches = await this._leaderboardService.findLeaderboard();
 
     const calculateLeaderborder = LeaderborderHomeCalc.leaderborderCalc(teams, matches);
-    // const sorted = LeaderboardController.sortResult(result);
-    // console.log(sorted);
-    return res.status(200).json(calculateLeaderborder);
+    const ordered = LeaderborderHomeCalc.orderedResult(calculateLeaderborder);
+    return res.status(200).json(ordered);
   };
 }
